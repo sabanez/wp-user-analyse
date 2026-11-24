@@ -9,6 +9,7 @@
  * License:           GPL-2.0-or-later
  * Text Domain:       wp-user-analyse
  * Domain Path:       /languages
+ * Update URI:        https://github.com/sabanez/wp-user-analyse
  *
  * @package WP_User_Analyse
  */

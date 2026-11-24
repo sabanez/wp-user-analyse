@@ -1,0 +1,39 @@
+name: Empaquetar release
+
+# Al publicar una release en GitHub, genera wp-user-analyse.zip y lo adjunta.
+# Las webs con el plugin instalado detectan la nueva versión desde Plugins.
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Comprobar que la versión coincide con la etiqueta
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          HEADER=$(grep -m1 -E '^\s*\*\s*Version:' wp-user-analyse.php | awk '{print $NF}')
+          CONST=$(grep -m1 "define( 'WUA_VERSION'" wp-user-analyse.php | sed -E "s/.*'([0-9][^']*)'.*/\1/")
+          echo "Etiqueta: $TAG · Cabecera: $HEADER · Constante: $CONST"
+          if [ "$TAG" != "$HEADER" ] || [ "$TAG" != "$CONST" ]; then
+            echo "::error::La etiqueta ($TAG) no coincide con Version ($HEADER) y WUA_VERSION ($CONST) en wp-user-analyse.php"
+            exit 1
+          fi
+
+      - name: Generar el zip
+        run: |
+          mkdir -p build/wp-user-analyse
+          rsync -a --exclude-from=.distignore --exclude build ./ build/wp-user-analyse/
+          cd build && zip -qr wp-user-analyse.zip wp-user-analyse
+
+      - name: Adjuntar a la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$GITHUB_REF_NAME" build/wp-user-analyse.zip --clobber

@@ -66,6 +66,30 @@ Para nombrar un botón en los informes:
 
 Eventos personalizados desde JavaScript: `wua.track('Vídeo reproducido')`.
 
+## Actualizaciones desde GitHub
+
+El plugin se actualiza desde las *releases* de este repositorio, igual que un plugin de wordpress.org: aviso en **Plugins**, actualización con un clic y, si se quiere, actualización automática.
+
+**Instalación inicial en cada web:** descarga `wp-user-analyse.zip` de la última release y súbelo en **Plugins → Añadir nuevo → Subir plugin**. No uses el botón "Download ZIP" del repositorio: ese zip trae una carpeta con otro nombre y las actualizaciones no la reconocerían.
+
+**Publicar una versión nueva:**
+
+1. Sube el número de versión en `wp-user-analyse.php`, en la cabecera `Version:` y en la constante `WUA_VERSION`.
+2. Fusiona el cambio en `main`.
+3. En GitHub, crea una release con la etiqueta `v` + versión (por ejemplo `v0.2.0`) y publícala.
+4. La GitHub Action *Empaquetar release* comprueba que la etiqueta coincide con la versión, genera `wp-user-analyse.zip` y lo adjunta a la release.
+5. Las webs muestran la actualización en las siguientes horas. Se puede forzar con el enlace "Check for updates" de la lista de plugins.
+
+Solo las releases publicadas llegan a las webs. Los commits en `main` no se distribuyen.
+
+Constantes opcionales en `wp-config.php`:
+
+- `WUA_GITHUB_TOKEN`: token de solo lectura, necesario si el repositorio pasa a ser privado.
+- `WUA_UPDATE_REPO`: URL de otro repositorio (por ejemplo, un fork).
+- `WUA_DISABLE_UPDATES`: `true` para desactivar la comprobación.
+
+Las actualizaciones usan la librería [Plugin Update Checker](https://github.com/YahnisElsts/plugin-update-checker) (licencia MIT), incluida en `lib/`.
+
 ## Notas técnicas
 
 - Requiere WordPress 6.0+ y PHP 7.4+, con MySQL o MariaDB.

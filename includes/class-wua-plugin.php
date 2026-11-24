@@ -44,6 +44,7 @@ final class WUA_Plugin {
 		( new WUA_User_Events() )->register();
 		( new WUA_Maintenance() )->register();
 		( new WUA_Privacy() )->register();
+		( new WUA_Updater() )->register();
 
 		if ( is_admin() ) {
 			( new WUA_Admin() )->register();
